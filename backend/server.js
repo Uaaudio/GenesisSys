@@ -12,10 +12,22 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
+// linkando e configurando express-session.
+
+const session = require("express-session");
+
+app.use(session({
+    secret: "Jesus-Salva", // "segredo"
+    resave: false,
+    saveUninitialized: true,
+    cookie:{maxAge:1800} // tempo de duração da sessão em segundo
+
+}))
 
 
 //importando sinc banco.
 const Connection = require('./config/connection');
+
 Connection.authenticate()
     .then(()=>{console.log("Banco conectado com sucesso")})
     .catch((error)=>{console.log(error)})
@@ -28,7 +40,7 @@ const montlhyFee = require('./database/models/fee');
 
 const Relationships = require('./config/relationships');
 
-
+// Sincronizando com o banco , forçando a criação de tabelas caso não existam e sempre alterando elas de acordo com os models.
 Connection.sync({force:false},{alter:true})
     .then(()=>{
         console.log("Banco sincronizado com sucesso");
@@ -41,8 +53,10 @@ Connection.sync({force:false},{alter:true})
 
 // importando minhas rotas.
 const adminRoutes = require('./routes/adminRoutes');
+const LoginRoutes = require('./routes/loginRoutes');
 
 app.use("/admin",adminRoutes);
+app.use("/login",LoginRoutes);
 
 
 

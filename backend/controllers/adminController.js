@@ -128,7 +128,69 @@ async function deleteUser(req,res){
 };
 
 
-module.exports = {createUser,deleteUser,listMemberperChurch};
+async function editUser (req,res){
+
+    const userId = req.body.userId;
+    var name = req.body.userName;
+    var churchId = req.body.churchId;
+
+    if (name && userId){
+        
+        try{
+            // fas a busca do usuario pelo id ( chave primaria dele).
+            const user = await User.findOne({where:{id: userId }});
+                 
+            if(user){
+
+                // verifica se os dados não são nulos.
+
+                if (name === undefined || name === ""){
+                    name = user.name
+                }
+                if(churchId === undefined || churchId === ""){
+                    churchId = user.churchId
+                }
+
+
+                // Atualiza o usuario. ( ja foi buscado la em cima).
+                await user.update({
+                    name:name,
+                    churchId: churchId,
+                });
+
+
+                console.log("Usuário atualizado com sucesso");
+                res.send("Usuario atualizado com sucesso");
+                //res.redirect("/rota que vou escolher ") 
+            
+            //Caso ocorra um erro ao atualizar o user ele entra aqui.
+            }else{
+
+                console.log(error);
+                console.log("Erro ao atualizar usuário");
+                res.send("Error ao cadastrar usuario");
+
+            };
+                
+        }catch(error){
+            res.send("Usuário não existe");
+            console.log(error);
+        }
+           
+
+    // caso os dados estejam incompletos ele entra aqui.
+    }else{
+        
+        console.log("Dados incompletos! , verifique por gentileza");
+        res.send("Dados Incompletos");
+    };
+
+};
+
+
+
+
+module.exports = {createUser,deleteUser,listMemberperChurch,editUser};
 
 
 
