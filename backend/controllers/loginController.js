@@ -31,13 +31,16 @@ async function doLogin(req,res) {
                     };
 
                     if(user.role === 'WENDELL' || user.role === 'ADMIN'){
-                        const AdminLogged = req.session.user;
+
+                        // Força o save da sessão.
                         req.session.save(()=>{
 
-                            res.send("Administradores");
+                            res.redirect("/admin/dashboard");
                         });
 
                     }else{
+
+                        // Força o save da sessão.
                         req.session.save(()=>{
 
                             res.redirect("/user/home");
@@ -46,33 +49,34 @@ async function doLogin(req,res) {
 
 
                 }else{
+                    // Redireciona o usuario pra tela de login ao errar a senha.
                     console.log("Senha incorreta");
-                    res.send("Perdão, senha incorreta");
+                    res.redirect("/");
 
                 }
             }else{
                 console.log("Usuario Não existe");
-                res.send("Usuario não existe");
+                res.redirect("/");
             }
 
 
         }catch(error){
+            // Caso não consiga buscar o usuario ele cai aqui
             console.log("Falha ao buscar usuario");
             console.log(error);
-            res.send("Falha ao buscar Usuario");
+            res.redirect("/");
 
         };
 
     }else{
+
+        // Caso as credenciais não estejam completas ele cairá aqui. E será redirecionado pra tela inicial.
         console.log("Login e senha incompletos, verificar por gentileza.");
-        res.send("Credenciais incompletas");
+        res.redirect("/");
     };
 
 
 };
-
-
-
 
 // função para realizar o logout.
 async function doLogout(req,res){

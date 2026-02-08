@@ -47,7 +47,7 @@ async function createUser(req,res){
     };
 
 };
-
+// função para listar os membros da igreja de acordo com o filtro
 async function listMemberperChurch(req,res){
 
     // Campo para inserir o Id da igreja que deseja filtrar os membros.
@@ -68,7 +68,8 @@ async function listMemberperChurch(req,res){
                     where:{status:feeStatus}
                 }] // busca as contas pagas.
                 });
-
+            
+            const totalUsers = users.count();
             
             // Manda os usuarios para o front.
 
@@ -187,10 +188,54 @@ async function editUser (req,res){
 
 };
 
+// função do dashboard do admin.
+async function adminDashboard(req,res){
+    
+    try{
+        
+        const today = new Date();
+        const month = today.getMonth() + 1;
+        //constante para pegar todos os usuarios do sistema.
+        const totalUsers = await User.count();
+        // Constante para pegar todas as contas pagas do mês atual.
+        const payedFees = await montlhyFee.count({where:{month:month,status:true}});
+        // Constante para pegar o total de igrejas registradas.
+        const totalChurches = await Church.count();
+        
+        if(totalUsers !== undefined && totalChurches !== undefined && payedFees !== undefined){
+
+            // Retorna a renderização da pagina do admin.
+            return res.render("dashboard",{
+                totalUsers,
+                totalChurches,
+                payedFees
+            });
+
+        }else{
+
+            console.log("Falha ao carregar página!");
+            console.log("Por Gentileza confira os campos")
+            
+            // Retorna a rota do admin.
+            return res.redirect("/dashboard");
+
+        };
+
+    }catch(error){
+
+        console.log("Erro ao consultar dados!");
+        console.log(error);
+
+        res.send("Erro ao acessar o dashboard, por gentileza, faça login novamente");
+        res.redirect("/")
+        
+
+    };
+};
 
 
 
-module.exports = {createUser,deleteUser,listMemberperChurch,editUser};
+module.exports = {createUser,deleteUser,listMemberperChurch,editUser,adminDashboard};
 
 
 

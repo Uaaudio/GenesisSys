@@ -1,0 +1,79 @@
+<%- include('../partials/header') %>
+
+<style>
+    body { background-color: #f0f2f5; }
+    .dash-container { padding-top: 30px; }
+    .stat-card {
+        border: none;
+        border-radius: 15px;
+        transition: transform 0.2s;
+        color: white;
+    }
+    .stat-card:hover { transform: scale(1.03); }
+    .icon-bg { font-size: 2.5rem; opacity: 0.3; position: absolute; right: 15px; bottom: 10px; }
+    .card-title { font-size: 1.1rem; font-weight: 300; }
+    .card-value { font-size: 2.2rem; font-weight: 700; }
+</style>
+
+<div class="container dash-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Painel de Controle <span class="badge bg-dark text-uppercase" style="font-size: 0.5em;">Admin</span></h2>
+        <a href="/user/home" class="btn btn-outline-secondary btn-sm">Voltar ao Portal</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card bg-primary shadow">
+                <div class="card-body">
+                    <div class="card-title text-uppercase">Membros Ativos</div>
+                    <div class="card-value"><%= totalUsers %></div>
+                    <i class="bi bi-people-fill icon-bg"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card bg-info shadow">
+                <div class="card-body text-white">
+                    <div class="card-title text-uppercase">Igrejas Parceiras</div>
+                    <div class="card-value"><%= totalChurches %></div>
+                    <i class="bi bi-church icon-bg"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card bg-success shadow">
+                <div class="card-body">
+                    <div class="card-title text-uppercase">Contribuições (Mês Atual)</div>
+                    <div class="card-value"><%= payedFees %></div>
+                    <i class="bi bi-check-circle-fill icon-bg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-2">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold">Gestão do Sistema</h5>
+        </div>
+        <div class="card-body">
+            <div class="list-group list-group-flush">
+                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    Gerenciar Usuários e Permissões
+                    <span class="badge bg-primary rounded-pill">></span>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    Relatório Financeiro Detalhado
+                    <span class="badge bg-primary rounded-pill">></span>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    Configurações das Igrejas
+                    <span class="badge bg-primary rounded-pill">></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
