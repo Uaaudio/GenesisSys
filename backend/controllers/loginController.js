@@ -32,13 +32,17 @@ async function doLogin(req,res) {
 
                     if(user.role === 'WENDELL' || user.role === 'ADMIN'){
                         const AdminLogged = req.session.user;
-                        res.send("Administradores");
+                        req.session.save(()=>{
 
+                            res.send("Administradores");
+                        });
 
                     }else{
-                        res.send("Usuario comum");
-                    }
+                        req.session.save(()=>{
 
+                            res.redirect("/user/home");
+                        });
+                    };
 
 
                 }else{
@@ -67,4 +71,17 @@ async function doLogin(req,res) {
 
 };
 
-module.exports = {doLogin};
+
+
+
+// função para realizar o logout.
+async function doLogout(req,res){
+
+    req.session.destroy(()=>{
+        console.log("Logout realizado com sucesso!!");
+        res.redirect("/");
+    });
+
+};
+
+module.exports = {doLogin,doLogout};

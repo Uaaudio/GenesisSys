@@ -12,15 +12,24 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
-// linkando e configurando express-session.
+// linkando e configurando ejs.
 
+
+const ejs = require("ejs");
+app.set("view engine","ejs");
+app.use(express.static("../frontend"));
+app.set("views",path.join(__dirname,"../frontend/pages"));
+
+
+
+// linkando e configurando express-session.
 const session = require("express-session");
 
 app.use(session({
     secret: "Jesus-Salva", // "segredo"
     resave: false,
     saveUninitialized: true,
-    cookie:{maxAge:1800} // tempo de duração da sessão em segundo
+    cookie:{secure:false} // tempo de duração da sessão em segundo
 
 }))
 
@@ -31,6 +40,9 @@ const Connection = require('./config/connection');
 Connection.authenticate()
     .then(()=>{console.log("Banco conectado com sucesso")})
     .catch((error)=>{console.log(error)})
+
+// função para gerar as taxas mensais.
+const generateFee = require("./utils/generateFee");
 
 
 //importando meus models
@@ -53,10 +65,18 @@ Connection.sync({force:false},{alter:true})
 
 // importando minhas rotas.
 const adminRoutes = require('./routes/adminRoutes');
-const LoginRoutes = require('./routes/loginRoutes');
+const loginRoutes = require('./routes/loginRoutes');
+const userRoutes = require('./routes/userRoutes');
+
+
+// Rota Main.
+app.get("/",(req,res)=>{
+    res.render("login");
+});
 
 app.use("/admin",adminRoutes);
-app.use("/login",LoginRoutes);
+app.use("/login",loginRoutes);
+app.use("/user",userRoutes);
 
 
 
