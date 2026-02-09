@@ -69,25 +69,17 @@ async function listMemberperChurch(req,res){
                 }] // busca as contas pagas.
                 });
             
-            const totalUsers = users.count();
-            
-            // Manda os usuarios para o front.
-
-            //res.render("",{users});
             res.send(users);
-
 
         }catch(error){
             console.log("Falha na consulta.");
             console.log(error);
-            res.send("Falha na consulta.");
-            //res.redirect("/rota que vou decidir");
-
+            
+            res.redirect("/admin/dashboard");
         };
     }else{
         console.log("Dados Incompletos");
-        res.send("Dados Incompletos");
-        //res.redirect("/rota que vou decidir");
+        res.redirect("/admin/dashboard");
     };
 
 };
@@ -109,26 +101,26 @@ async function deleteUser(req,res){
             });
 
             console.log("Usuario Deletado com sucesso");
-            res.send("Usuario Deletado com sucesso");
-            //res.redirect("/");
+            
+            res.redirect("/admin/dashboard");
 
         
         }catch(error){
             console.log("Erro ao Deletar usuario");
             console.log(error);
             res.send("Erro ao deletar usuario");
-            //res.redirect("/");
+            res.redirect("/admin/dashboard");
         };
         
     }else{
         console.log("Dados incompletos");
-        res.send("Dados incompletos");
+        res.redirect("/admin/dashboard");
 
     };
     
 };
 
-
+// Função para editar usuario.
 async function editUser (req,res){
 
     const userId = req.body.userId;
@@ -192,6 +184,7 @@ async function editUser (req,res){
 async function adminDashboard(req,res){
     
     try{
+        const userLogged = req.session.user
         
         const today = new Date();
         const month = today.getMonth() + 1;
@@ -208,7 +201,8 @@ async function adminDashboard(req,res){
             return res.render("dashboard",{
                 totalUsers,
                 totalChurches,
-                payedFees
+                payedFees,
+                userLogged
             });
 
         }else{
@@ -235,7 +229,77 @@ async function adminDashboard(req,res){
 
 
 
-module.exports = {createUser,deleteUser,listMemberperChurch,editUser,adminDashboard};
+async function seeMyMembers(req,res) {
+    try{
+        const adminLogged = req.session.user;
+        
+
+        const users = await User.findAll({where:{
+            churchId: adminLogged.churchId
+        }});
+
+        return res.render("users",{
+            users
+        });
+
+    }catch(error){
+        console.log("Error ao Consultar dados");
+        console.log(error);
+    };
+    
+
+};
+
+
+async function manualLauch(req,res){
+
+    try{
+
+        // Campos pra consula.
+        const feeId = req.body.feeId;
+        const feeValue = req.body.feeValue;
+
+        //verifica de os campos existem.
+        if(feeId && feeValue > 0){
+
+            // Busca a taxa pelo Id.
+            const feeToLauch = await montlhyFee.findOne({where:{id:feeId}});
+
+            //Verifica se a fatura de fato existe.
+           if (feeToLauch){
+                
+                // Atualiza a fatura da vez.
+                await feeToLauch.update({
+                    value:feeValue,
+                    status: true
+                });
+
+                // Após a alteração o usuario irá pro dashboard.
+                console.log("Fatura lançada com sucesso");
+                res.redirect("/admin/dashboard");
+
+           }else{
+                console.log("Falha ao buscar fatura");
+                return res.redirect("/admin/dashboard");
+           };
+
+        }else{
+            console.log("Id ou Valor Inválidos");
+            return res.redirect("/admin/dashboard");
+
+        };
+
+    }catch(error){
+        console.log("Falha ao receber os campos");
+        return res.redirect("/admin/dashboard");
+
+    };
+
+};
+
+
+
+module.exports = {createUser,deleteUser,listMemberperChurch,editUser,adminDashboard,manualLauch,seeMyMembers};
 
 
 

@@ -16,25 +16,32 @@ async function seeFees(req,res){
             const fees = await montlhyFee.findAll({where:{userId:userLogged.id},order:[['createdAt','DESC']]});
             
             console.log(fees);
-            res.send("Fees");
-            //onde eu vou renderizar a pagina, com as contas do usuario.(la eu consigo filtrar tudo certinho).
-            //res.render("",{});
+            
+            res.render("fees",{
+                fees,
+                userLogged
+            });
+            
+
+
+
         }catch(error){
 
             console.log("Erro ao consultar dados");
-            res.send("Erro ao consultar dados");
-            //res.redirect("/Rota que vou decidir");
+            res.redirect("/user/home");
         };
 
     }else{
-        res.send("Id do usuario não existe");
-        //res.redirect("/Rota que eu decidir");
+        // Caso o id do user estaeja vazio ou com problema ele cai aqui.
+        res.redirect("/user/home");
     };
 };
 
 async function homePage(req,res){
     
+    // Constante que pega o id do usuario na sessão.
     const userLogged = req.session.user;    
+
     try{
         
         res.render("home",{userLogged});

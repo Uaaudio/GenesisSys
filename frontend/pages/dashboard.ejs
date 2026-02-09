@@ -55,25 +55,58 @@
 
     <div class="card shadow-sm mt-2">
         <div class="card-header bg-white py-3">
-            <h5 class="mb-0 fw-bold">Gestão do Sistema</h5>
+            <h5 class="mb-0 fw-bold">Gestão Operacional</h5>
         </div>
         <div class="card-body">
             <div class="list-group list-group-flush">
-                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
-                    Gerenciar Usuários e Permissões
+                
+                <a href="/admin/members" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                    Gerenciar Membros da Igreja
                     <span class="badge bg-primary rounded-pill">></span>
                 </a>
-                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
-                    Relatório Financeiro Detalhado
-                    <span class="badge bg-primary rounded-pill">></span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+
+                <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3" data-bs-toggle="modal" data-bs-target="#modalFiltro">
+                    Filtrar Membros por Status
+                    <span class="badge bg-success rounded-pill">Filtrar</span>
+                </button>
+
+                <a href="/admin/church/create" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
                     Configurações das Igrejas
                     <span class="badge bg-primary rounded-pill">></span>
                 </a>
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="modalFiltro" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Relatório Personalizado</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/admin/seemembers" method="POST">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">ID da Igreja</label>
+            <input type="number" name="churchId" class="form-control" required placeholder="Digite o ID da congregação">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status do Pagamento</label>
+            <select name="feeStatus" class="form-select">
+              <option value="true">Pagos</option>
+              <option value="false">Pendentes</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Gerar Lista</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <%- include('../partials/footer') %>

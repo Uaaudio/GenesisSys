@@ -1,0 +1,78 @@
+<%- include ('../partials/header') %>
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <h2 class="mb-0 h4"><i class="bi bi-exclamation-triangle-fill"></i> Dízimos Pendentes</h2>
+        </div>
+
+        <div class="card-body">
+            <% if (fees.length > 0) { %>
+                <div class="list-group">
+                    <% fees.forEach((fee) => { %>
+                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Referência: <strong>Mês <%= fee.month %></strong></h6>
+                                <small class="text-muted">Vencimento registrado em: <%= new Date(fee.createdAt).toLocaleDateString('pt-BR') %></small>
+                            </div>
+                            <div class="text-end">
+                                <span class="d-block h5 text-danger mb-1">R$ <%= fee.value %></span>
+                                <a href="/user/pay/<%= fee.id %>" class="btn btn-sm btn-success">Pagar Agora</a>
+                                
+                                <% if(userLogged.role === 'ADMIN' || userLogged.role === 'WENDELL' ){%>
+                                    <button class="btn btn-primary btn-sm" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#modalLancamento" 
+                                            onclick="prepararLancamento('<%= fee.id %>', '<%= fee.month %>')">
+                                        Lançar Dízimo
+                                    </button>
+                                <%}%>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="text-center py-4">
+                    <p class="text-muted">Oba! Você não possui dízimos pendentes no momento. 🙌</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalLancamento" tabindex="-1" aria-labelledby="modalLancamentoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalLancamentoLabel">Confirmar Recebimento Manual</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/admin/manual-launch" method="POST">
+          <div class="modal-body">
+              <p>Você está lançando o pagamento para o mês: <strong id="mesReferencia"></strong></p>
+              
+              <input type="hidden" name="feeId" id="inputFeeId">
+
+              <div class="mb-3">
+                  <label for="feeValue" class="form-label">Valor Recebido (R$)</label>
+                  <input type="number" name="feeValue" step="0.01" class="form-control" id="feeValue" placeholder="0,00" required min="0.01">
+                  <div class="form-text">Insira o valor exato entregue pelo fiel.</div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success">Confirmar e Lançar</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+    function prepararLancamento(id, mes) {
+        document.getElementById('inputFeeId').value = id;
+        document.getElementById('mesReferencia').innerText = mes;
+    }
+</script>
+
+<%- include ('../partials/footer') %>
